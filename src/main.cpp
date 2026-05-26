@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <thread>
 #include <chrono>
+#include <cctype>
 
 #include "Puzzle15.h"
 #include "Solver.h"
@@ -21,6 +22,33 @@ void showControls() {
     cout << "A - рух плитки вліво\n";
     cout << "D - рух плитки вправо\n";
     cout << "Q - повернутися в меню\n";
+}
+
+void showProgramInfo() {
+    cout << "\n=====================================\n";
+    cout << " ІНФОРМАЦІЯ ПРО ПРОГРАМУ\n";
+    cout << "=====================================\n";
+    cout << "Назва: Логічна гра-головоломка «Гра у 15»\n";
+    cout << "Тип програми: консольний застосунок C++\n";
+    cout << "Розмір поля: 4x4\n";
+    cout << "Мета гри: розташувати числа від 1 до 15 у правильному порядку.\n\n";
+
+    cout << "Основні можливості:\n";
+    cout << "- випадкова генерація початкового поля;\n";
+    cout << "- ручне проходження гри користувачем;\n";
+    cout << "- автоматичний пошук рішення;\n";
+    cout << "- безперервна демонстрація рішення;\n";
+    cout << "- покрокова демонстрація рішення;\n";
+    cout << "- перевірка розв'язності позиції;\n";
+    cout << "- використання контейнерних класів C++.\n\n";
+
+    cout << "Використані структури даних:\n";
+    cout << "- vector для збереження ігрового поля;\n";
+    cout << "- priority_queue для алгоритму A*;\n";
+    cout << "- unordered_map для збереження вартості станів.\n\n";
+
+    cout << "Алгоритм автоматичного рішення: A*.\n";
+    cout << "Евристика: Манхеттенська відстань.\n";
 }
 
 void playManual(Puzzle15& game) {
@@ -63,6 +91,12 @@ void demonstrateSolution(Puzzle15& game, bool stepByStep) {
     if (game.isSolved()) {
         cout << "\nГоловоломка вже розв'язана.\n";
         game.printBoard();
+        return;
+    }
+
+    if (!game.isSolvable()) {
+        cout << "\nПоточна позиція не є розв'язною.\n";
+        cout << "Створіть нову гру.\n";
         return;
     }
 
@@ -115,6 +149,7 @@ void showMenu() {
     cout << "4. Скинути поле до початкового стану\n";
     cout << "5. Автоматичне рішення - безперервний режим\n";
     cout << "6. Автоматичне рішення - покроковий режим\n";
+    cout << "7. Інформація про програму\n";
     cout << "0. Вихід\n";
     cout << "Ваш вибір: ";
 }
@@ -142,6 +177,13 @@ int main() {
                 game.resetBoard();
                 game.shuffleBoard();
                 cout << "\nСтворено нову випадкову гру.\n";
+
+                if (game.isSolvable()) {
+                    cout << "Позиція є розв'язною.\n";
+                } else {
+                    cout << "Позиція не є розв'язною.\n";
+                }
+
                 game.printBoard();
                 break;
 
@@ -153,6 +195,12 @@ int main() {
             case 3:
                 cout << "\nПоточне поле:\n";
                 game.printBoard();
+
+                if (game.isSolvable()) {
+                    cout << "Позиція є розв'язною.\n";
+                } else {
+                    cout << "Позиція не є розв'язною.\n";
+                }
                 break;
 
             case 4:
@@ -167,6 +215,10 @@ int main() {
 
             case 6:
                 demonstrateSolution(game, true);
+                break;
+
+            case 7:
+                showProgramInfo();
                 break;
 
             case 0:

@@ -3,6 +3,9 @@
 
 #include <vector>
 
+// Клас Puzzle15 відповідає за логіку ігрового поля:
+// створення поля, перемішування, переміщення плиток,
+// перевірку перемоги та виведення поля на екран.
 class Puzzle15 {
 private:
     std::vector<int> board;
@@ -16,6 +19,7 @@ public:
 
     bool moveTile(char direction);
     bool isSolved() const;
+    bool isSolvable() const;
 
     int findEmpty() const;
 
