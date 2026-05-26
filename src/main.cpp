@@ -1,7 +1,11 @@
 #include <iostream>
 #include <limits>
 #include <windows.h>
+#include <thread>
+#include <chrono>
+
 #include "Puzzle15.h"
+#include "Solver.h"
 
 using namespace std;
 
@@ -55,6 +59,52 @@ void playManual(Puzzle15& game) {
     }
 }
 
+void demonstrateSolution(Puzzle15& game, bool stepByStep) {
+    if (game.isSolved()) {
+        cout << "\nГоловоломка вже розв'язана.\n";
+        game.printBoard();
+        return;
+    }
+
+    cout << "\nПошук автоматичного рішення...\n";
+    cout << "Зачекайте, це може зайняти кілька секунд.\n";
+
+    string solution = Solver::solve(game.getBoard());
+
+    if (solution.empty()) {
+        cout << "\nРішення не знайдено або перевищено ліміт пошуку.\n";
+        cout << "Спробуйте створити нову гру.\n";
+        return;
+    }
+
+    cout << "\nРішення знайдено.\n";
+    cout << "Кількість ходів: " << solution.length() << "\n";
+
+    if (stepByStep) {
+        clearInput();
+    }
+
+    for (int i = 0; i < static_cast<int>(solution.length()); i++) {
+        char move = solution[i];
+
+        game.moveTile(move);
+
+        cout << "\nКрок " << i + 1 << " з " << solution.length() << "\n";
+        cout << "Хід: " << move << "\n";
+
+        game.printBoard();
+
+        if (stepByStep) {
+            cout << "Натисніть Enter для наступного кроку...";
+            cin.get();
+        } else {
+            this_thread::sleep_for(chrono::milliseconds(500));
+        }
+    }
+
+    cout << "\nАвтоматичну демонстрацію завершено.\n";
+}
+
 void showMenu() {
     cout << "\n=====================================\n";
     cout << " ЛОГІЧНА ГРА-ГОЛОВОЛОМКА «ГРА У 15»\n";
@@ -63,6 +113,8 @@ void showMenu() {
     cout << "2. Грати вручну\n";
     cout << "3. Показати поточне поле\n";
     cout << "4. Скинути поле до початкового стану\n";
+    cout << "5. Автоматичне рішення - безперервний режим\n";
+    cout << "6. Автоматичне рішення - покроковий режим\n";
     cout << "0. Вихід\n";
     cout << "Ваш вибір: ";
 }
@@ -107,6 +159,14 @@ int main() {
                 game.resetBoard();
                 cout << "\nПоле скинуто до початкового стану.\n";
                 game.printBoard();
+                break;
+
+            case 5:
+                demonstrateSolution(game, false);
+                break;
+
+            case 6:
+                demonstrateSolution(game, true);
                 break;
 
             case 0:
